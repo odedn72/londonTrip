@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מאיה ושני קורעות את לונדון - דצמבר 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Leaflet CSS & JS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm London Winter -->
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #fafaf9; /* stone-50 */
+            color: #292524; /* stone-800 */
+        }
+        h1, h2, h3, .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin: 0 auto;
+        }
+        /* Map Container updated for split view */
+        #day-map-container {
+            height: 100%;
+            min-height: 400px;
+            width: 100%;
+            z-index: 1;
+        }
+        .timeline-line {
+            position: absolute;
+            right: 1.25rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #e7e5e4; /* stone-200 */
+            z-index: 0;
+        }
+        .timeline-dot {
+            z-index: 10;
+        }
+        .active-timeline-item {
+            border-color: #b91c1c; /* red-700 */
+            background-color: #fef2f2; /* red-50 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        /* Travel Connector Style */
+        .travel-connector {
+            position: relative;
+            padding-right: 3.5rem; /* Indent to align with cards */
+            margin: 0.5rem 0;
+            color: #78716c;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+        }
+        .travel-connector::before {
+            content: '';
+            position: absolute;
+            right: 1.25rem; /* Align with main timeline line */
+            height: 100%;
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                #a8a29e 0,
+                #a8a29e 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            z-index: 1;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-red-800">🇬🇧 מאיה ושני קורעות את לונדון</h1>
+                <p class="text-sm text-stone-500">15 - 20 בדצמבר | קובנט גרדן</p>
+            </div>
+            <button id="menu-btn" class="md:hidden text-stone-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            <nav class="hidden md:flex space-x-6 space-x-reverse">
+                <button onclick="app.navigate('itinerary')" class="nav-link font-semibold text-red-700 border-b-2 border-red-700 pb-1">תכנון יומי</button>
+                <button onclick="app.navigate('vintage')" class="nav-link text-stone-500 hover:text-red-700 transition pb-1">מדריך וינטג׳</button>
+            </nav>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-stone-50 border-t px-4 py-2 space-y-2 shadow-inner">
+            <button onclick="app.navigate('itinerary')" class="block w-full text-right py-2 font-medium text-red-700">תכנון יומי</button>
+            <button onclick="app.navigate('vintage')" class="block w-full text-right py-2 text-stone-600">מדריך וינטג׳</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-6" id="app-container">
+        
+        <!-- View: Itinerary (Default) -->
+        <div id="view-itinerary" class="fade-in">
+            
+            <!-- 1. Day Selector (Top) -->
+            <div class="flex overflow-x-auto no-scrollbar gap-2 mb-6 pb-2 border-b border-stone-200" id="day-selector">
+                <!-- JS populated -->
+            </div>
+
+            <!-- Context Info -->
+             <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-stone-800" id="day-title-display">יום...</h2>
+                    <p class="text-stone-500" id="day-subtitle-display">תיאור...</p>
+                </div>
+                <div class="mt-2 md:mt-0 flex gap-3 text-sm">
+                    <span class="bg-red-50 text-red-700 px-3 py-1 rounded-full border border-red-100"><i class="fas fa-map-marker-alt ml-1"></i><span id="day-area-display"></span></span>
+                    <span class="bg-amber-50 text-amber-700 px-3 py-1 rounded-full border border-amber-100"><i class="fas fa-star ml-1"></i><span id="day-highlight-display"></span></span>
+                </div>
+            </div>
+
+            <!-- 2. Split View: Timeline (Right) & Map (Left) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 h-auto lg:h-[600px]">
+                
+                <!-- Right: Detailed Timeline -->
+                <div class="overflow-y-auto pr-2 custom-scroll lg:h-full">
+                     <div class="space-y-4 relative pr-4" id="timeline-container">
+                        <div class="timeline-line"></div>
+                        <!-- JS populated -->
+                    </div>
+                </div>
+
+                <!-- Left: Map (Sticky on Desktop) -->
+                <div class="h-[400px] lg:h-full rounded-xl overflow-hidden shadow-md border border-stone-200 relative">
+                    <div id="day-map-container"></div>
+                </div>
+
+            </div>
+
+            <!-- 3. Bottom Section: Infographics & Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Activity Mix Chart -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 col-span-1 md:col-span-2">
+                    <h3 class="font-bold text-stone-700 mb-4 border-b pb-2">אופי הפעילות היומי</h3>
+                    <div class="flex items-center gap-4">
+                        <div class="w-1/3">
+                            <div class="chart-container">
+                                <canvas id="dayTypeChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="w-2/3 text-sm text-stone-600 space-y-2">
+                            <p>הגרף מציג את חלוקת הזמן המשוערת. השתמשו בזה כדי לתכנן את רמות האנרגיה שלכן.</p>
+                            <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li><span class="text-red-700 font-bold">תרבות:</span> מוזיאונים, הצגות, אתרים.</li>
+                                <li><span class="text-emerald-600 font-bold">שופינג:</span> שווקים, קניונים, חנויות.</li>
+                                <li><span class="text-amber-600 font-bold">אוכל:</span> מסעדות, שווקי אוכל, נשנושים.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Walking Stats / Info Card -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-stone-100 flex flex-col justify-center items-center text-center">
+                    <div class="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-4 text-stone-600 text-2xl">
+                        <i class="fas fa-shoe-prints"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-stone-800 mb-1">מדד הליכה</h3>
+                    <div class="text-3xl font-bold text-red-700 mb-2" id="day-walking-display">4.5 ק"מ</div>
+                    <p class="text-sm text-stone-500 px-4">הערכה משוערת למרחק ההליכה המצטבר ביום זה (לא כולל שיטוט בתוך חנויות!).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Vintage Guide -->
+        <div id="view-vintage" class="hidden fade-in">
+             <div class="mb-6 p-4 bg-white rounded-lg border-r-4 border-amber-600 shadow-sm">
+                <h2 class="text-lg font-bold mb-2">מדריך הוינטג' והשווקים</h2>
+                <p class="text-stone-600 text-sm">ריכוז ההמלצות לשווקים וחנויות יד-שנייה לפי אזורים.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="vintage-container"></div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-800 text-stone-300 py-6 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-sm">תוכנן עבור מאיה ושני בלונדון 🇬🇧 | דצמבר 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Data ---
+        const hotelLocation = { lat: 51.5166, lng: -0.1175, title: "Club Quarters Hotel" }; 
+
+        const tripData = [
+            {
+                id: 1,
+                dayShort: "שני",
+                date: "15/12",
+                title: "נחיתה והתאקלמות",
+                area: "קובנט גרדן והולבורן",
+                highlight: "שוק קובנט גרדן",
+                walking: "3.5 ק״מ",
+                stats: { culture: 25, food: 30, shopping: 25, transit: 20 },
+                timeline: [
+                    { time: "14:00 - 16:30", title: "נחיתה והגעה למלון", icon: "fa-plane-arrival", type: "transit", desc: "נחיתה, דרכונים, נסיעה למלון (Club Quarters Hotel) והתארגנות.", coords: { lat: 51.5166, lng: -0.1175 }, travelToNext: "🚶 8 דק' הליכה" },
+                    { time: "17:00 - 18:15", title: "סיבוב כריסמס ראשון", icon: "fa-tree", type: "culture", desc: "הליכה לקובנט גרדן (השוק המקורה) וכיכר לסטר. אווירת חג ומופעי רחוב.", coords: { lat: 51.5117, lng: -0.1240 }, travelToNext: "🚶 6 דק' הליכה" },
+                    { time: "18:15 - 19:00", title: "פיקדילי סירקוס", icon: "fa-video", type: "culture", desc: "המסכים המפורסמים והאורות של לונדון. הליכה קצרה מכיכר לסטר.", coords: { lat: 51.5101, lng: -0.1340 }, travelToNext: "🚶 5 דק' הליכה" },
+                    { time: "19:00 - 20:00", title: "סוהו וצ'יינה טאון", icon: "fa-dragon", type: "culture", desc: "שיטוט ברחובות הצבעוניים של סוהו, השערים האדומים של צ'יינה טאון והפנסים.", coords: { lat: 51.5119, lng: -0.1300 }, travelToNext: "🚶 7 דק' הליכה" },
+                    { time: "20:00 - 21:30", title: "ארוחת ערב", icon: "fa-utensils", type: "food", desc: "Seven Dials Market (מתחם אוכל) או Dishoom (הודית).", coords: { lat: 51.5135, lng: -0.1265 } }
+                ]
+            },
+            {
+                id: 2,
+                dayShort: "שלישי",
+                date: "16/12",
+                title: "קלאסיקה ופלאי חורף",
+                area: "מערב לונדון",
+                highlight: "Winter Wonderland",
+                walking: "5.0 ק״מ",
+                stats: { culture: 30, food: 20, shopping: 20, transit: 30 },
+                timeline: [
+                    { time: "10:00 - 12:30", title: "מוזיאון הטבע", icon: "fa-dinosaur", type: "culture", desc: "Natural History Museum בדרום קנסינגטון.", coords: { lat: 51.4967, lng: -0.1764 }, travelToNext: "🚶 20 דק' הליכה" },
+                    { time: "12:30 - 15:30", title: "Harrods ואוכל", icon: "fa-bag-shopping", type: "shopping", desc: "ביקור בבית הכלבו היוקרתי וב-Food Hall המפורסם.", coords: { lat: 51.4994, lng: -0.1632 }, travelToNext: "🚌 15 דק' אוטובוס" },
+                    { time: "16:00 - 20:00", title: "Winter Wonderland", icon: "fa-snowflake", type: "culture", desc: "הייד פארק. יריד הכריסמס הגדול.", coords: { lat: 51.5073, lng: -0.1657 } }
+                ]
+            },
+            {
+                id: 3,
+                dayShort: "רביעי",
+                date: "17/12",
+                title: "שופינג ומלך האריות",
+                area: "נוטינג היל & ווסטפילד",
+                highlight: "מלך האריות",
+                walking: "3.5 ק״מ",
+                stats: { culture: 20, food: 10, shopping: 50, transit: 20 },
+                timeline: [
+                    { time: "10:00 - 13:00", title: "שוק פורטבלו", icon: "fa-store", type: "shopping", desc: "נוטינג היל. עתיקות ובתי קפה צבעוניים.", coords: { lat: 51.5160, lng: -0.2057 }, travelToNext: "🚇 15 דק' (Central Line)" },
+                    { time: "13:00 - 16:00", title: "קניון Westfield", icon: "fa-tags", type: "shopping", desc: "המרכז הגדול ב-White City. כולל Sephora.", coords: { lat: 51.5076, lng: -0.2215 }, travelToNext: "🚇 25 דק' (Central Line)" },
+                    { time: "16:00 - 17:30", title: "מנוחה במלון", icon: "fa-bed", type: "transit", desc: "התרעננות והתארגנות לערב.", coords: null, travelToNext: "🚶 10 דק' הליכה" },
+                    { time: "19:30", title: "הצגה: The Lion King", icon: "fa-ticket-alt", type: "culture", desc: "תיאטרון Lyceum בקובנט גרדן.", coords: { lat: 51.5113, lng: -0.1198 } }
+                ]
+            },
+            {
+                id: 4,
+                dayShort: "חמישי",
+                date: "18/12",
+                title: "וינטג' ואורות בוטניים",
+                area: "מזרח העיר & קיו",
+                highlight: "Christmas at Kew",
+                walking: "4.0 ק״מ",
+                stats: { culture: 40, food: 20, shopping: 20, transit: 20 },
+                timeline: [
+                    { time: "10:00 - 14:00", title: "שורדיץ' & בריק ליין", icon: "fa-glasses", type: "shopping", desc: "Old Spitalfields Market וחנויות הוינטג'.", coords: { lat: 51.5200, lng: -0.0719 }, travelToNext: "🚇 55 דק' (נסיעה)" },
+                    { time: "14:00 - 15:00", title: "נסיעה מערבה", icon: "fa-train", type: "transit", desc: "נסיעה ארוכה ל-Kew Gardens.", coords: null, travelToNext: "🚶 5 דק'" },
+                    { time: "16:30 - 19:30", title: "Christmas at Kew", icon: "fa-leaf", type: "culture", desc: "הגנים הבוטניים מוארים במיצגי אור.", coords: { lat: 51.4787, lng: -0.2956 } }
+                ]
+            },
+            {
+                id: 5,
+                dayShort: "שישי",
+                date: "19/12",
+                title: "רוקנרול וסוהו",
+                area: "קמדן & סוהו",
+                highlight: "קמדן מרקט",
+                walking: "4.0 ק״מ",
+                stats: { culture: 10, food: 30, shopping: 40, transit: 20 },
+                timeline: [
+                    { time: "10:00 - 14:00", title: "קמדן מרקט", icon: "fa-record-vinyl", type: "shopping", desc: "בגדים אלטרנטיביים ואוכל רחוב.", coords: { lat: 51.5413, lng: -0.1460 }, travelToNext: "🚶 15 דק' הליכה" },
+                    { time: "14:00 - 16:00", title: "תצפית / אוקספורד", icon: "fa-walking", type: "culture", desc: "Primrose Hill לתצפית או השלמות באוקספורד.", coords: { lat: 51.5395, lng: -0.1607 }, travelToNext: "🚇 30 דק' (Northern Line)" },
+                    { time: "ערב", title: "סוהו וצ'יינה טאון", icon: "fa-wine-glass", type: "food", desc: "ארוחת ערב חגיגית ואווירת שישי בערב.", coords: { lat: 51.5126, lng: -0.1332 } }
+                ]
+            },
+            {
+                id: 6,
+                dayShort: "שבת",
+                date: "20/12",
+                title: "אוכל ופרידה",
+                area: "גדה דרומית",
+                highlight: "בורו מרקט",
+                walking: "3.0 ק״מ",
+                stats: { culture: 20, food: 50, shopping: 10, transit: 20 },
+                timeline: [
+                    { time: "09:30 - 12:30", title: "Borough Market", icon: "fa-burger", type: "food", desc: "שוק האוכל הטוב בעיר.", coords: { lat: 51.5055, lng: -0.0910 }, travelToNext: "🚶 10 דק' הליכה" },
+                    { time: "12:30 - 15:00", title: "South Bank", icon: "fa-water", type: "culture", desc: "הליכה לאורך הנהר, טייט מודרן.", coords: { lat: 51.5076, lng: -0.0994 }, travelToNext: "🚌 20 דק' אוטובוס" },
+                    { time: "15:00", title: "איסוף מזוודות", icon: "fa-suitcase", type: "transit", desc: "חזרה למלון.", coords: null, travelToNext: "🚕/🚇 60 דק' (לשדה)" },
+                    { time: "17:00", title: "יציאה לשדה", icon: "fa-plane-departure", type: "transit", desc: "המראה ב-21:00.", coords: null }
+                ]
+            }
+        ];
+
+        const vintageShops = [
+            { name: "Rokit", location: "Covent Garden, Brick Lane, Camden", desc: "רשת מסודרת ומעולה למתחילים." },
+            { name: "Beyond Retro", location: "Soho, Brick Lane", desc: "מחסני ענק עם מגוון עצום של פריטים." },
+            { name: "Atika", location: "Spitalfields", desc: "חנות כלבו לוינטג' - ענקית ומגניבה." },
+            { name: "Picknweight", location: "Covent Garden", desc: "קנייה לפי משקל. חוויה ייחודית." }
+        ];
+
+        // --- App Logic ---
+        const app = {
+            currentDayId: 1,
+            chartInstance: null,
+            mapInstance: null,
+            currentMarkers: [],
+            markerMap: {}, 
+            
+            init: function() {
+                this.renderDaySelector();
+                this.renderVintage();
+                this.initMap(); 
+                this.loadDay(1); 
+                this.setupEventListeners();
+            },
+
+            // New helper for creating dynamic numbered icons
+            createNumberedIcon: function(number, isActive) {
+                const bgColor = isActive ? '#ef4444' : '#3b82f6'; // Red-500 : Blue-500
+                const size = isActive ? '1.5rem' : '1.5rem';
+                const scale = isActive ? 'transform: scale(1.2); z-index: 100;' : '';
+                
+                return L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style='background-color: ${bgColor}; width: ${size}; height: ${size}; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem; ${scale}'>${number}</div>`,
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                });
+            },
+
+            setupEventListeners: function() {
+                document.getElementById('menu-btn').addEventListener('click', () => {
+                    const menu = document.getElementById('mobile-menu');
+                    menu.classList.toggle('hidden');
+                });
+            },
+
+            navigate: function(viewName) {
+                document.getElementById('view-itinerary').classList.add('hidden');
+                document.getElementById('view-vintage').classList.add('hidden');
+                
+                document.getElementById(`view-${viewName}`).classList.remove('hidden');
+                
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('font-semibold', 'text-red-700', 'border-b-2', 'border-red-700');
+                    link.classList.add('text-stone-500');
+                });
+                
+                // 0 = Itinerary, 1 = Vintage
+                const navIndex = viewName === 'itinerary' ? 0 : 1;
+                const activeLink = document.querySelectorAll('.nav-link')[navIndex];
+                if(activeLink) {
+                    activeLink.classList.remove('text-stone-500');
+                    activeLink.classList.add('font-semibold', 'text-red-700', 'border-b-2', 'border-red-700');
+                }
+
+                if (viewName === 'itinerary' && this.mapInstance) {
+                    setTimeout(() => { this.mapInstance.invalidateSize(); }, 100);
+                }
+                document.getElementById('mobile-menu').classList.add('hidden');
+            },
+
+            renderDaySelector: function() {
+                const container = document.getElementById('day-selector');
+                container.innerHTML = tripData.map(day => `
+                    <button onclick="app.loadDay(${day.id})" 
+                            class="day-btn flex-shrink-0 px-4 py-3 rounded-lg text-sm font-medium transition duration-200 border w-24
+                            ${day.id === this.currentDayId 
+                                ? 'bg-red-700 text-white border-red-700 shadow-md' 
+                                : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'}"
+                            data-id="${day.id}">
+                        <div class="text-xs opacity-75">${day.dayShort}</div>
+                        <div class="font-bold text-lg">${day.date}</div>
+                    </button>
+                `).join('');
+            },
+
+            loadDay: function(dayId) {
+                this.currentDayId = dayId;
+                const day = tripData.find(d => d.id === dayId);
+                
+                // Update Selector
+                document.querySelectorAll('.day-btn').forEach(btn => {
+                    const id = parseInt(btn.dataset.id);
+                    if (id === dayId) {
+                        btn.className = 'day-btn flex-shrink-0 px-4 py-3 rounded-lg text-sm font-medium transition duration-200 border w-24 bg-red-700 text-white border-red-700 shadow-md transform scale-105';
+                    } else {
+                        btn.className = 'day-btn flex-shrink-0 px-4 py-3 rounded-lg text-sm font-medium transition duration-200 border w-24 bg-white text-stone-600 border-stone-200 hover:bg-stone-50';
+                    }
+                });
+
+                // Update Text
+                document.getElementById('day-title-display').textContent = `${day.dayShort}, ${day.date}`;
+                document.getElementById('day-subtitle-display').textContent = day.title;
+                document.getElementById('day-area-display').textContent = day.area;
+                document.getElementById('day-highlight-display').textContent = day.highlight;
+                document.getElementById('day-walking-display').textContent = day.walking;
+
+                // Update Visuals
+                this.renderTimeline(day.timeline);
+                this.updateChart(day.stats);
+                this.updateMapForDay(day);
+            },
+
+            renderTimeline: function(timeline) {
+                const container = document.getElementById('timeline-container');
+                container.innerHTML = '<div class="timeline-line"></div>';
+                
+                timeline.forEach((item, index) => {
+                    const colorClass = 
+                        item.type === 'shopping' ? 'bg-emerald-100 text-emerald-700' :
+                        item.type === 'food' ? 'bg-amber-100 text-amber-700' :
+                        item.type === 'culture' ? 'bg-red-100 text-red-700' :
+                        'bg-stone-100 text-stone-600'; 
+
+                    // כפתור ניווט
+                    let navBtn = '';
+                    if (item.coords) {
+                        navBtn = `
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${item.coords.lat},${item.coords.lng}" 
+                               target="_blank" 
+                               onclick="event.stopPropagation()"
+                               class="ml-2 w-6 h-6 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-200 transition-colors" 
+                               title="נווט לנקודה">
+                                <i class="fas fa-location-arrow text-[10px]"></i>
+                            </a>
+                        `;
+                    }
+
+                    // כרטיסייה ראשית
+                    const html = `
+                        <div id="timeline-item-${index}" class="timeline-item relative flex items-start gap-4 fade-in cursor-pointer group" 
+                             style="animation-delay: ${index * 100}ms"
+                             onclick="app.focusPoint(${index})">
+                             
+                             <!-- Number Badge -->
+                             <div class="absolute -right-3 top-4 w-6 h-6 rounded-full bg-stone-800 text-white flex items-center justify-center text-xs font-bold border-2 border-white shadow-sm z-20">
+                                ${index + 1}
+                             </div>
+
+                             <div class="flex-grow bg-white p-4 rounded-lg border border-stone-200 hover:border-red-300 transition-all duration-200 card-content">
+                                <div class="flex justify-between items-start mb-1">
+                                    <h4 class="font-bold text-stone-800 mr-2">${item.title}</h4>
+                                    <div class="flex items-center">
+                                        ${navBtn}
+                                        <span class="text-xs font-semibold bg-stone-50 px-2 py-1 rounded border border-stone-200 text-stone-500 flex-shrink-0 mr-2">${item.time}</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-stone-600 leading-relaxed">${item.desc}</p>
+                            </div>
+                            <div class="timeline-dot flex-shrink-0 w-8 h-8 rounded-full ${colorClass} flex items-center justify-center border-2 border-white shadow-sm z-10 group-hover:scale-110 transition-transform">
+                                <i class="fas ${item.icon} text-xs"></i>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+
+                    // אלמנט מעבר (Travel Connector) אם קיים
+                    if (item.travelToNext) {
+                         const connectorHtml = `
+                            <div class="travel-connector fade-in" style="animation-delay: ${(index * 100) + 50}ms">
+                                <span class="bg-stone-100 text-stone-500 text-xs px-2 py-1 rounded-full border border-stone-200 shadow-sm flex items-center gap-1 mx-auto z-10">
+                                    ${item.travelToNext}
+                                </span>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', connectorHtml);
+                    }
+                });
+            },
+
+            focusPoint: function(selectedIndex) {
+                // UI Highlight
+                document.querySelectorAll('.card-content').forEach(el => {
+                    el.classList.remove('active-timeline-item');
+                });
+                const item = document.getElementById(`timeline-item-${selectedIndex}`);
+                if (item) {
+                    item.querySelector('.card-content').classList.add('active-timeline-item');
+                }
+
+                // Map Marker Logic
+                Object.entries(this.markerMap).forEach(([key, marker]) => {
+                    const idx = parseInt(key);
+                    const isSelected = (idx === selectedIndex);
+                    
+                    // Update icon state (blue vs red) with number
+                    marker.setIcon(this.createNumberedIcon(idx + 1, isSelected));
+                    
+                    if (isSelected) {
+                        marker.openPopup();
+                        marker.setZIndexOffset(1000);
+                    } else {
+                        marker.closePopup();
+                        marker.setZIndexOffset(0);
+                    }
+                });
+            },
+
+            updateChart: function(stats) {
+                const ctx = document.getElementById('dayTypeChart').getContext('2d');
+                if (this.chartInstance) {
+                    this.chartInstance.destroy();
+                }
+                this.chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['תרבות', 'אוכל', 'שופינג', 'נסיעות/מנוחה'],
+                        datasets: [{
+                            data: [stats.culture, stats.food, stats.shopping, stats.transit],
+                            backgroundColor: ['#b91c1c', '#d97706', '#059669', '#78716c'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: { display: false } 
+                        }
+                    }
+                });
+            },
+
+            initMap: function() {
+                this.mapInstance = L.map('day-map-container', { 
+                    zoomControl: true,
+                    scrollWheelZoom: false 
+                }).setView([51.5117, -0.1240], 13);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(this.mapInstance);
+            },
+
+            updateMapForDay: function(day) {
+                if (!this.mapInstance) return;
+
+                // Clear
+                this.currentMarkers.forEach(marker => this.mapInstance.removeLayer(marker));
+                this.currentMarkers = [];
+                this.markerMap = {};
+
+                // Hotel (Purple - Static)
+                const hotelIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style='background-color: #7e22ce; width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);'></div>`, 
+                    iconSize: [24, 24], iconAnchor: [12, 12]
+                });
+                
+                const hotelMkr = L.marker([hotelLocation.lat, hotelLocation.lng], { icon: hotelIcon })
+                    .addTo(this.mapInstance)
+                    .bindPopup(`<b>${hotelLocation.title}</b>`);
+                this.currentMarkers.push(hotelMkr);
+
+                // Add points from timeline
+                day.timeline.forEach((item, index) => {
+                    if (item.coords) {
+                        // Create numbered icon
+                        const mkr = L.marker([item.coords.lat, item.coords.lng], { 
+                            icon: this.createNumberedIcon(index + 1, false) 
+                        })
+                        .addTo(this.mapInstance)
+                        .bindPopup(`<b>${index + 1}. ${item.title}</b><br>${item.time}`);
+                        
+                        // Click interaction
+                        mkr.on('click', () => {
+                             app.focusPoint(index);
+                             document.getElementById(`timeline-item-${index}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        });
+
+                        this.currentMarkers.push(mkr);
+                        this.markerMap[index] = mkr;
+                    }
+                });
+
+                // Calculate Bounds properly using FeatureGroup
+                const group = L.featureGroup(this.currentMarkers);
+
+                // Fit bounds
+                setTimeout(() => {
+                    this.mapInstance.invalidateSize();
+                    if (this.currentMarkers.length > 0) {
+                        this.mapInstance.fitBounds(group.getBounds(), { padding: [50, 50] });
+                    } else {
+                        this.mapInstance.setView([hotelLocation.lat, hotelLocation.lng], 14);
+                    }
+                }, 100);
+            },
+
+            renderVintage: function() {
+                const container = document.getElementById('vintage-container');
+                container.innerHTML = vintageShops.map(shop => `
+                    <div class="bg-white p-5 rounded-lg border border-stone-100 shadow-sm hover:border-amber-200 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-lg text-stone-800">${shop.name}</h4>
+                                <p class="text-sm text-stone-500 mb-2"><i class="fas fa-map-pin ml-1"></i>${shop.location}</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-700">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                        </div>
+                        <p class="text-stone-600 text-sm mt-1">${shop.desc}</p>
+                    </div>
+                `).join('');
+            }
+        };
+
+        // Start App
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>
