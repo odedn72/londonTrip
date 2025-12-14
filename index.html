@@ -238,30 +238,32 @@
                 id: 2,
                 dayShort: "שלישי",
                 date: "16/12",
-                title: "קלאסיקה ופלאי חורף",
-                area: "מערב לונדון",
-                highlight: "Winter Wonderland",
-                walking: "5.0 ק״מ",
-                stats: { culture: 30, food: 20, shopping: 20, transit: 30 },
+                title: "קלאסיקה, ורוד וכיכר טרפלגר",
+                area: "מערב לונדון ומרכז",
+                highlight: "כיכר טרפלגר",
+                walking: "4.5 ק״מ",
+                stats: { culture: 30, food: 30, shopping: 20, transit: 20 },
                 timeline: [
                     { time: "10:00 - 12:30", title: "מוזיאון הטבע", icon: "fa-dinosaur", type: "culture", desc: "Natural History Museum בדרום קנסינגטון.", coords: { lat: 51.4967, lng: -0.1764 }, travelToNext: "🚶 20 דק' הליכה" },
-                    { time: "12:30 - 15:30", title: "Harrods ואוכל", icon: "fa-bag-shopping", type: "shopping", desc: "ביקור בבית הכלבו היוקרתי וב-Food Hall המפורסם.", coords: { lat: 51.4994, lng: -0.1632 }, travelToNext: "🚌 15 דק' אוטובוס" },
-                    { time: "16:00 - 20:00", title: "Winter Wonderland", icon: "fa-snowflake", type: "culture", desc: "הייד פארק. יריד הכריסמס הגדול.", coords: { lat: 51.5073, lng: -0.1657 } }
+                    { time: "12:30 - 14:15", title: "Harrods ואוכל", icon: "fa-bag-shopping", type: "shopping", desc: "ביקור בבית הכלבו היוקרתי וב-Food Hall המפורסם.", coords: { lat: 51.4994, lng: -0.1632 }, travelToNext: "🚶 15 דק' הליכה (לבלגרביה)" },
+                    { time: "14:30 - 16:00", title: "Afternoon Tea (מוזמן)", icon: "fa-mug-hot", type: "food", desc: "תה מנחה חגיגי ב-Peggy Porschen (הוזמן ל-14:30). חוויה קלאסית ומתוקה.", coords: { lat: 51.4952, lng: -0.1497 }, travelToNext: "🚌 25 דק' (אוטובוס לכיכר)" },
+                    { time: "17:15 - 19:00", title: "כיכר טרפלגר (Trafalgar Square)", icon: "fa-tree", type: "culture", desc: "עץ האשוח הענק, מזרקות מוארות, הופעות רחוב והגלריה הלאומית ברקע.", coords: { lat: 51.5080, lng: -0.1281 } }
                 ]
             },
             {
                 id: 3,
                 dayShort: "רביעי",
                 date: "17/12",
-                title: "שופינג ומלך האריות",
-                area: "נוטינג היל & ווסטפילד",
+                title: "תרבות, שופינג ומלך האריות",
+                area: "מרכז ומערב לונדון",
                 highlight: "מלך האריות",
-                walking: "3.5 ק״מ",
-                stats: { culture: 20, food: 10, shopping: 50, transit: 20 },
+                walking: "4.0 ק״מ",
+                stats: { culture: 35, food: 10, shopping: 35, transit: 20 },
                 timeline: [
-                    { time: "10:00 - 13:00", title: "שוק פורטבלו", icon: "fa-store", type: "shopping", desc: "נוטינג היל. עתיקות ובתי קפה צבעוניים.", coords: { lat: 51.5160, lng: -0.2057 }, travelToNext: "🚇 15 דק' (Central Line)" },
-                    { time: "13:00 - 16:00", title: "קניון Westfield", icon: "fa-tags", type: "shopping", desc: "המרכז הגדול ב-White City. כולל Sephora.", coords: { lat: 51.5076, lng: -0.2215 }, travelToNext: "🚇 25 דק' (Central Line)" },
-                    { time: "16:00 - 17:30", title: "מנוחה במלון", icon: "fa-bed", type: "transit", desc: "התרעננות והתארגנות לערב.", coords: null, travelToNext: "🚶 10 דק' הליכה" },
+                    { time: "10:45 - 12:45", title: "מארי אנטואנט (V&A)", icon: "fa-crown", type: "culture", desc: "תערוכה במוזיאון ויקטוריה ואלברט (V&A) בדרום קנסינגטון.", coords: { lat: 51.4966, lng: -0.1722 }, travelToNext: "🚇 25 דק' (לנוטינג היל)" },
+                    { time: "13:30 - 15:30", title: "שוק פורטבלו", icon: "fa-store", type: "shopping", desc: "נוטינג היל. סיבוב קצר יותר בשוק (בעיקר אווירה ואוכל) וצילומים ליד הבתים הצבעוניים.", coords: { lat: 51.5160, lng: -0.2057 }, travelToNext: "🚇 15 דק' (Central Line)" },
+                    { time: "15:30 - 17:30", title: "קניון Westfield", icon: "fa-tags", type: "shopping", desc: "קפיצה ממוקדת לקניון (ספורה וכו').", coords: { lat: 51.5076, lng: -0.2215 }, travelToNext: "🚇 25 דק' (חזרה למלון)" },
+                    { time: "17:30 - 18:30", title: "מנוחה והתארגנות", icon: "fa-bed", type: "transit", desc: "התרעננות זריזה במלון לפני ההצגה.", coords: null, travelToNext: "🚶 10 דק' הליכה" },
                     { time: "19:30", title: "הצגה: The Lion King", icon: "fa-ticket-alt", type: "culture", desc: "תיאטרון Lyceum בקובנט גרדן.", coords: { lat: 51.5113, lng: -0.1198 } }
                 ]
             },
@@ -269,15 +271,16 @@
                 id: 4,
                 dayShort: "חמישי",
                 date: "18/12",
-                title: "וינטג' ואורות בוטניים",
-                area: "מזרח העיר & קיו",
-                highlight: "Christmas at Kew",
-                walking: "4.0 ק״מ",
-                stats: { culture: 40, food: 20, shopping: 20, transit: 20 },
+                title: "צילומים, וינטג' ו-Winter Wonderland",
+                area: "מזרח העיר והייד פארק",
+                highlight: "Winter Wonderland",
+                walking: "6.0 ק״מ",
+                stats: { culture: 35, food: 20, shopping: 25, transit: 20 },
                 timeline: [
-                    { time: "10:00 - 14:00", title: "שורדיץ' & בריק ליין", icon: "fa-glasses", type: "shopping", desc: "Old Spitalfields Market וחנויות הוינטג'.", coords: { lat: 51.5200, lng: -0.0719 }, travelToNext: "🚇 55 דק' (נסיעה)" },
-                    { time: "14:00 - 15:00", title: "נסיעה מערבה", icon: "fa-train", type: "transit", desc: "נסיעה ארוכה ל-Kew Gardens.", coords: null, travelToNext: "🚶 5 דק'" },
-                    { time: "16:30 - 19:30", title: "Christmas at Kew", icon: "fa-leaf", type: "culture", desc: "הגנים הבוטניים מוארים במיצגי אור.", coords: { lat: 51.4787, lng: -0.2956 } }
+                    { time: "08:30 - 09:30", title: "סשן צילומים 📸", icon: "fa-camera", type: "culture", desc: "סשן צילומים מקצועי. נקודת מפגש: Covent Garden Station. להתלבש יפה!", coords: { lat: 51.5129, lng: -0.1243 }, travelToNext: "🚇 30 דק' (לשורדיץ')" },
+                    { time: "10:15 - 14:00", title: "שורדיץ' & בריק ליין", icon: "fa-glasses", type: "shopping", desc: "Old Spitalfields Market וחנויות הוינטג'.", coords: { lat: 51.5200, lng: -0.0719 }, travelToNext: "🚇 35 דק' (Central Line)" },
+                    { time: "14:30 - 15:30", title: "נסיעה להייד פארק", icon: "fa-train", type: "transit", desc: "נסיעה ישירה ב-Central Line משורדיץ' (Liverpool St) להייד פארק (Marble Arch).", coords: null, travelToNext: "🚶 5 דק'" },
+                    { time: "16:00 - 20:00", title: "Winter Wonderland", icon: "fa-snowflake", type: "culture", desc: "הייד פארק. יריד הכריסמס הגדול. מתקנים, דוכנים ויין חם.", coords: { lat: 51.5073, lng: -0.1657 } }
                 ]
             },
             {
@@ -290,9 +293,9 @@
                 walking: "4.0 ק״מ",
                 stats: { culture: 10, food: 30, shopping: 40, transit: 20 },
                 timeline: [
-                    { time: "10:00 - 14:00", title: "קמדן מרקט", icon: "fa-record-vinyl", type: "shopping", desc: "בגדים אלטרנטיביים ואוכל רחוב.", coords: { lat: 51.5413, lng: -0.1460 }, travelToNext: "🚶 15 דק' הליכה" },
-                    { time: "14:00 - 16:00", title: "תצפית / אוקספורד", icon: "fa-walking", type: "culture", desc: "Primrose Hill לתצפית או השלמות באוקספורד.", coords: { lat: 51.5395, lng: -0.1607 }, travelToNext: "🚇 30 דק' (Northern Line)" },
-                    { time: "ערב", title: "סוהו וצ'יינה טאון", icon: "fa-wine-glass", type: "food", desc: "ארוחת ערב חגיגית ואווירת שישי בערב.", coords: { lat: 51.5126, lng: -0.1332 } }
+                    { time: "10:00 - 14:00", title: "קמדן מרקט", icon: "fa-record-vinyl", type: "shopping", desc: "בגדים אלטרנטיביים ואוכל רחוב.", coords: { lat: 51.5413, lng: -0.1460 }, travelToNext: "🚶 15 דק' (לפרימרוז) או 🚇 (לאוקספורד)" },
+                    { time: "14:00 - 16:30", title: "בחירה: תצפית או אוקספורד", icon: "fa-question-circle", type: "culture", desc: "אופציה 1: Primrose Hill - גבעה עם תצפית מדהימה (מומלץ בשקיעה).\nאופציה 2: רחוב אוקספורד - שופינג ואורות כריסמס. *טיפ: בשישי החנויות הגדולות (פריימארק, סלפרידג'ס) פתוחות עד 22:00!*", coords: { lat: 51.5141, lng: -0.1557 }, travelToNext: "🚇 20 דק' (לסוהו)" },
+                    { time: "17:00 - 20:00", title: "ערב בסוהו וצ'יינה טאון", icon: "fa-wine-glass", type: "food", desc: "ארוחת ערב חגיגית ואווירת שישי בערב. האזור תוסס ומלא מסעדות מעולות.", coords: { lat: 51.5126, lng: -0.1332 } }
                 ]
             },
             {
@@ -314,10 +317,30 @@
         ];
 
         const vintageShops = [
-            { name: "Rokit", location: "Covent Garden, Brick Lane, Camden", desc: "רשת מסודרת ומעולה למתחילים." },
-            { name: "Beyond Retro", location: "Soho, Brick Lane", desc: "מחסני ענק עם מגוון עצום של פריטים." },
-            { name: "Atika", location: "Spitalfields", desc: "חנות כלבו לוינטג' - ענקית ומגניבה." },
-            { name: "Picknweight", location: "Covent Garden", desc: "קנייה לפי משקל. חוויה ייחודית." }
+            { 
+                name: "Rokit", 
+                location: "Covent Garden, Brick Lane, Camden", 
+                desc: "רשת מסודרת ומעולה למתחילים.",
+                summary: "רוקיט היא המקום המושלם להתחיל בו אם אתן נרתעות מחנויות יד-שנייה מבולגנות. החנויות מסודרות, נקיות, והבגדים עוברים כביסה וגיהוץ. הסגנון הוא בעיקר אופנת רחוב, ג'ינסים (Levi's 501 בשפע), ומעילים צבאיים. יש להם גם ליין 'Reworked' של בגדים ישנים שנתפרו מחדש לגזרות מודרניות. המחירים סבירים (לא זול מאוד, אבל לא יקר)."
+            },
+            { 
+                name: "Beyond Retro", 
+                location: "Soho, Brick Lane", 
+                desc: "מחסני ענק עם מגוון עצום של פריטים.",
+                summary: "רשת ענקית שהיא גן עדן לחובבות המרדף. החנות בבריק ליין ענקית במיוחד. הבגדים מסודרים לפי צבעים ועשורים, מה שמקל על החיפוש. תמצאו שם הכל: שמלות משנות ה-50, חולצות פלנל מהניינטיז, סרבלים ואביזרים. המחירים משתנים מאוד בהתאם לפריט. מומלץ לחפש את המותג הפרטי שלהם שעשוי מבדים ממוחזרים."
+            },
+            { 
+                name: "Atika", 
+                location: "Spitalfields", 
+                desc: "חנות כלבו לוינטג' - ענקית ומגניבה.",
+                summary: "אטיקה היא לא סתם חנות, היא 'כלבו' של וינטג'. שתי קומות עצומות ומעוצבות לעילא (נראית כמו חנות של Urban Outfitters, רק יד-שנייה). יש שם מבחר עצום של מותגי ספורט (נייקי, אדידס), לצד מותגי יוקרה (ברברי, ראלף לורן). המחירים קצת יותר גבוהים מהממוצע, אבל האיכות והחוויה שוות את זה. יש גם מחלקת ריהוט וספרים."
+            },
+            { 
+                name: "Picknweight", 
+                location: "Covent Garden", 
+                desc: "קנייה לפי משקל. חוויה ייחודית.",
+                summary: "חוויה שונה לגמרי. כאן לא משלמים לפי פריט, אלא לפי משקל (יש צבעים שונים של 'זמזמים' עם מחיר שונה לקילו). זה דורש סבלנות לחפור בערימות, אבל אפשר למצוא מציאות מטורפות (צעיפי משי, חולצות דקות) במחירים מצחיקים כי המשקל שלהם נמוך. החנות עצמה מעוצבת ומגניבה מאוד."
+            }
         ];
 
         // --- App Logic ---
@@ -380,6 +403,21 @@
                     setTimeout(() => { this.mapInstance.invalidateSize(); }, 100);
                 }
                 document.getElementById('mobile-menu').classList.add('hidden');
+            },
+
+            toggleVintageSummary: function(index) {
+                const summaryDiv = document.getElementById(`vintage-summary-${index}`);
+                const btnIcon = document.getElementById(`vintage-btn-icon-${index}`);
+                
+                if (summaryDiv.classList.contains('hidden')) {
+                    summaryDiv.classList.remove('hidden');
+                    btnIcon.classList.remove('fa-book-open');
+                    btnIcon.classList.add('fa-times');
+                } else {
+                    summaryDiv.classList.add('hidden');
+                    btnIcon.classList.remove('fa-times');
+                    btnIcon.classList.add('fa-book-open');
+                }
             },
 
             renderDaySelector: function() {
@@ -614,8 +652,11 @@
 
             renderVintage: function() {
                 const container = document.getElementById('vintage-container');
-                container.innerHTML = vintageShops.map(shop => `
-                    <div class="bg-white p-5 rounded-lg border border-stone-100 shadow-sm hover:border-amber-200 transition">
+                container.innerHTML = vintageShops.map((shop, index) => {
+                    const mapQuery = encodeURIComponent(`${shop.name} vintage London`);
+                    
+                    return `
+                    <div class="bg-white p-5 rounded-lg border border-stone-100 shadow-sm hover:border-amber-200 transition flex flex-col h-full">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h4 class="font-bold text-lg text-stone-800">${shop.name}</h4>
@@ -625,9 +666,28 @@
                                 <i class="fas fa-tshirt"></i>
                             </div>
                         </div>
-                        <p class="text-stone-600 text-sm mt-1">${shop.desc}</p>
+                        <p class="text-stone-600 text-sm mt-1 mb-4 flex-grow">${shop.desc}</p>
+                        
+                        <!-- Hidden Summary Section -->
+                        <div id="vintage-summary-${index}" class="hidden mb-4 p-3 bg-amber-50 rounded-lg text-sm text-stone-700 border-l-4 border-amber-400">
+                            <p class="font-bold text-amber-800 mb-1">הדעה שלי:</p>
+                            ${shop.summary}
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 mt-2 border-t border-stone-100 pt-3">
+                            <a href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" 
+                               target="_blank"
+                               class="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-700 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition">
+                                <i class="fas fa-location-arrow text-xs"></i> ניווט
+                            </a>
+                            <button onclick="app.toggleVintageSummary(${index})" 
+                               class="flex-1 flex items-center justify-center gap-2 bg-stone-50 text-stone-600 py-2 rounded-lg text-sm font-medium hover:bg-stone-100 transition">
+                                <i id="vintage-btn-icon-${index}" class="fas fa-book-open text-xs"></i> קרא עוד
+                            </button>
+                        </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
         };
 
